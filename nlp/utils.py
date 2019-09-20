@@ -46,6 +46,7 @@ def get_response(intent):
 
 
 def input_module():
+    time.sleep(0.5)
     print('Bot: What is your day of birth?')
     day = int(input("You: "))
     print('Bot: What is your month of birth?')
