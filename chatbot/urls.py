@@ -20,5 +20,5 @@ from chatbot.api.urls import urlpatterns as api_url
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'^/', include((api_url, 'api'), namespace='api')),
+    url(r'^', include((api_url, 'api'), namespace='api')),
 ]
