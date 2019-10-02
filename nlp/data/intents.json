@@ -25,7 +25,7 @@
          "context": [""]
         },
         {"tag": "predict_disease",
-         "patterns": ["How to check cardiovascular disease?", "Open cardiovascular disease prediction module", "Give me a prediction of my health state", "List all cardiovascular disease predictions with my data", "Do I have a cardiovascular disease?" ],
+         "patterns": ["How to check cardiovascular disease?", "Open cardiovascular disease prediction module", "Give me a prediction of my health state", "List all cardiovascular disease predictions with my data", "Do I have a cardiovascular disease?", "Can you do the testing for me?" ],
          "responses": ["Navigating to prediction module...", "I need you to provide some data first.", "I'd love to help, but you need to tell me more about yourself."],
          "context": [""]
         }

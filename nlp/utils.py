@@ -10,16 +10,27 @@ from keras.models import load_model
 
 from nlp import constants
 from nlp.data import preprocess
+from nlp.data_utils import MyIOError, MyTypeError
 
-data = pickle.load(open(constants.MODEL_PATH + constants.DATA_NAME, "rb"))
-words = data['words']
-classes = data['classes']
+try:
+    data = pickle.load(open(constants.MODEL_PATH + constants.DATA_NAME, "rb"))
+    words = data['words']
+    classes = data['classes']
+except IOError:
+    raise MyIOError(constants.MODEL_PATH + constants.DATA_NAME)
+
+try:
+    cardio = load_model(constants.MODEL_PATH + constants.CARDIO_MODEL)
+except IOError:
+    raise MyIOError(constants.MODEL_PATH + constants.CARDIO_MODEL)
+
+try:
+    with open(constants.MODEL_PATH + constants.BOT_MODEL, 'rb') as f:
+        model = pickle.load(f)
+except IOError:
+    raise MyIOError(constants.MODEL_PATH + constants.BOT_MODEL)
+
 intents = json.loads(open(constants.DATA + constants.INTENT_FILE).read())
-
-with open(constants.MODEL_PATH + constants.BOT_MODEL, 'rb') as f:
-    model = pickle.load(f)
-
-cardio = load_model(constants.MODEL_PATH + constants.CARDIO_MODEL)
 
 
 def classify_local(sentence):
@@ -37,7 +48,8 @@ def classify_local(sentence):
     return return_list
 
 
-def get_response(intent):
+def get_response(message):
+    intent = classify_local(message)[0]['intent']
     for i in intents['intents']:
         if intent == i['tag']:
             id = random.randrange(len(i['responses']))
@@ -46,39 +58,41 @@ def get_response(intent):
 
 
 def input_module():
-    time.sleep(0.5)
-    print('Bot: What is your day of birth?')
-    day = int(input("You: "))
-    print('Bot: What is your month of birth?')
-    month = int(input("You: "))
-    print('Bot: In which year were you born?')
-    year = int(input("You: "))
-    print('Bot: Are you a boy or a girl?')
-    time.sleep(0.5)
-    print('Bot: Actually, I prefer numbers, so 0 for female, 1 for male please.')
-    gender = input("You: ")
-    print('Bot: What is your height?')
-    height = float(input("You: "))  # in cm
-    print('Bot: What is your weight?')
-    weight = float(input("You: "))  # in kilograms
-    print('Bot: What is your blood pressure? One line for high, one line for low please.')
-    ap_hi = int(input("You: "))  # Systolic blood pressure
-    ap_low = int(input("You: "))  # Diastolic blood pressure
-    print('Bot: How high is your cholesterol level on a scale of 1 to 3?')
-    cholesterol = int(input("You: "))  # 1: normal, 2: above normal, 3: well above normal
-    print('Bot: Now do the same with glucose please.')
-    gluc = int(input("You: "))  # 1: normal, 2: above normal, 3: well above normal
-    print('Bot: Do you smoke? I would appreciate 0 or 1 as an answer.')
-    smoke = input("You: ")  # 1 if you smoke, 0 if not
-    print('Bot: Do you drink? Again, same as the last one.')
-    alco = input("You: ")  # 1 if you drink alcohol, 0 if not
-    print('Bot: Final question. Do you exercise? Remember, I can only take in numbers.')
-    active = input("You: ")
-    return day, month, year, gender, height, weight, ap_hi, ap_low, cholesterol, gluc, smoke, alco, active
+    try:
+        time.sleep(0.5)
+        print('Bot: What is your birthday?')
+        time.sleep(0.5)
+        print('Bot: I am not American, unfortunately. So I only take the dd/mm/yyyy format')
+        full_date = input("You: ")
+        day, month, year = full_date.split('/')
+        f_date = date(int(year), int(month), int(day))
+        print('Bot: Are you a boy or a girl?')
+        time.sleep(0.5)
+        print('Bot: Actually, I prefer numbers, so 1 for female, 2 for male please.')
+        gender = input("You: ")
+        print('Bot: What is your height in centimeters?')
+        height = float(input("You: "))  # in cm
+        print('Bot: What is your weight in kilograms?')
+        weight = float(input("You: "))  # in kilograms
+        print('Bot: What is your blood pressure? One line for high, one line for low please.')
+        ap_hi = int(input("You: "))  # Systolic blood pressure
+        ap_low = int(input("You: "))  # Diastolic blood pressure
+        print('Bot: How high is your cholesterol level on a scale of 1 to 3?')
+        cholesterol = int(input("You: "))  # 1: normal, 2: above normal, 3: well above normal
+        print('Bot: Now do the same with your glucose level glucose please.')
+        gluc = int(input("You: "))  # 1: normal, 2: above normal, 3: well above normal
+        print('Bot: Do you smoke? I would appreciate 0 or 1 as an answer.')
+        smoke = input("You: ")  # 1 if you smoke, 0 if not
+        print('Bot: Do you drink? Again, same as the last one.')
+        alco = input("You: ")  # 1 if you drink alcohol, 0 if not
+        print('Bot: Final question with this format. Do you exercise?')
+        active = input("You: ")
+    except Exception:
+        raise MyTypeError()
+    return f_date, gender, height, weight, ap_hi, ap_low, cholesterol, gluc, smoke, alco, active
 
 
-def create_test_case(day, month, year, gender, height, weight, ap_hi, ap_low, cholesterol, gluc, smoke, alco, active):
-    f_date = date(year, month, day)
+def create_test_case(f_date, gender, height, weight, ap_hi, ap_low, cholesterol, gluc, smoke, alco, active):
     l_date = date.today()
     delta = l_date - f_date
     agedays = delta.days
@@ -108,4 +122,7 @@ def show_result(final):
         print('Bot: You are healthy... Probably. But you should still be careful with your habits.')
     else:
         print('Bot: You are perfectly healthy. Keep up the good work!')
+
+
+
 
