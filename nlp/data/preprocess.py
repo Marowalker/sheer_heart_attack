@@ -15,7 +15,7 @@ def clean_up_sentence(sentence):
 # return bag of words array: 0 or 1 for each word in the bag that exists in the sentence
 
 
-def bow(sentence, words, show_details=True):
+def bow(sentence, words, show_details=False):
     # tokenize the pattern
     sentence_words = clean_up_sentence(sentence)
     # bag of words - matrix of N words, vocabulary matrix
@@ -25,8 +25,8 @@ def bow(sentence, words, show_details=True):
             if w == s:
                 # assign 1 if current word is in the vocabulary position
                 bag[i] = 1
-                # if show_details:
-                    # print("found in bag: %s" % w)
+                if show_details:
+                    print("found in bag: %s" % w)
     return np.array(bag)
 
 
@@ -34,7 +34,7 @@ def process(intent_file):
     words = []
     classes = []
     documents = []
-    intents = json.loads(open(intent_file).read())
+    intents = json.loads(open(intent_file, 'r', encoding='utf-8').read())
     # loop through each sentence in our intents patterns
     for intent in intents['intents']:
         for pattern in intent['patterns']:

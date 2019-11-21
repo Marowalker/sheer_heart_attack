@@ -62,7 +62,9 @@ class CardioModel:
 
         self.model.fit(self.train_x, self.train_y, epochs=50, batch_size=50, verbose=0)
 
-        self.model.save(constants.MODEL_PATH + self.model_name)
+        # self.model.save(constants.MODEL_PATH + self.model_name)
+
+        pickle.dump(self.model, open(constants.MODEL_PATH + self.model_name, "wb"))
 
     def evaluate(self):
         score = self.model.evaluate(self.train_x, self.train_y)

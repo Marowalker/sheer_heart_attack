@@ -27,4 +27,4 @@ ERROR_THRESHOLD = 0.25
 
 BOT_MODEL = 'sheer_heart_attack.pkl'
 DATA_NAME = 'sheer_heart_attack_data.pkl'
-CARDIO_MODEL = 'bite_the_dust.h5'
+CARDIO_MODEL = 'bite_the_dust.pkl'

@@ -6,55 +6,72 @@ from datetime import date
 
 import numpy as np
 import pandas as pd
-from keras.models import load_model
 
 from nlp import constants
 from nlp.data import preprocess
 from nlp.data_utils import MyIOError, MyTypeError
 
-try:
-    data = pickle.load(open(constants.MODEL_PATH + constants.DATA_NAME, "rb"))
-    words = data['words']
-    classes = data['classes']
-except IOError:
-    raise MyIOError(constants.MODEL_PATH + constants.DATA_NAME)
 
-try:
-    cardio = load_model(constants.MODEL_PATH + constants.CARDIO_MODEL)
-except IOError:
-    raise MyIOError(constants.MODEL_PATH + constants.CARDIO_MODEL)
-
-try:
-    with open(constants.MODEL_PATH + constants.BOT_MODEL, 'rb') as f:
-        model = pickle.load(f)
-except IOError:
-    raise MyIOError(constants.MODEL_PATH + constants.BOT_MODEL)
-
-intents = json.loads(open(constants.DATA + constants.INTENT_FILE).read())
+# from keras.models import load_model
 
 
-def classify_local(sentence):
+def load_prediction_model(filename):
+    try:
+        model = pickle.load(open(filename, "rb"))
+    except IOError:
+        raise MyIOError(filename)
+    return model
+
+
+data = load_prediction_model(constants.MODEL_PATH + constants.DATA_NAME)
+words = data['words']
+classes = data['classes']
+
+intents = json.loads(open(constants.DATA + constants.INTENT_FILE, encoding="utf8").read())
+
+
+def classify_local(sentence, model):
     # generate probabilities from the model
     input_data = pd.DataFrame([preprocess.bow(sentence, words)], dtype=float, index=['input'])
     results = model.predict([input_data])[0]
+    # print(results)
     # filter out predictions below a threshold, and provide intent index
     results = [[i, r] for i, r in enumerate(results) if r > constants.ERROR_THRESHOLD]
     # sort by strength of probability
     results.sort(key=lambda x: x[1], reverse=True)
+    # print(results)
     return_list = []
     for r in results:
+        # print(r)
         return_list.append({"intent": classes[r[0]], "probability": str(r[1])})
     # return tuple of intent and probability
     return return_list
 
 
-def get_response(message):
-    intent = classify_local(message)[0]['intent']
+def get_response(message, model, user_id='123', show_details=False):
+    # intent = classify_local(message, model)[0]['intent']
+    context = {}
+    result = classify_local(message, model)
+    # print(result)
+    intent = result[0]['intent']
     for i in intents['intents']:
         if intent == i['tag']:
-            id = random.randrange(len(i['responses']))
-            response = i['responses'][id]
-            return response
+            if i['context'] != '':
+                if show_details:
+                    print('context:', i['context'])
+                context[user_id] = i['context']
+            if not 'link' in i or \
+                    (user_id in context and 'link' in i and i['link'] == context[user_id]):
+                if show_details:
+                    print('tag:', i['tag'])
+                # a random response from the intent
+                # return print(random.choice(i['responses']))
+                # a random response from the intent
+
+                id = random.randrange(len(i['responses']))
+                response = i['responses'][id]
+                # print(response)
+                return response
 
 
 def input_module():
@@ -82,11 +99,11 @@ def input_module():
         print('Bot: Now do the same with your glucose level glucose please.')
         gluc = int(input("You: "))  # 1: normal, 2: above normal, 3: well above normal
         print('Bot: Do you smoke? I would appreciate 0 or 1 as an answer.')
-        smoke = input("You: ")  # 1 if you smoke, 0 if not
+        smoke = int(input("You: "))  # 1 if you smoke, 0 if not
         print('Bot: Do you drink? Again, same as the last one.')
-        alco = input("You: ")  # 1 if you drink alcohol, 0 if not
+        alco = int(input("You: "))  # 1 if you drink alcohol, 0 if not
         print('Bot: Final question with this format. Do you exercise?')
-        active = input("You: ")
+        active = int(input("You: "))
     except Exception:
         raise MyTypeError()
     return f_date, gender, height, weight, ap_hi, ap_low, cholesterol, gluc, smoke, alco, active
@@ -115,7 +132,7 @@ def create_test_case(f_date, gender, height, weight, ap_hi, ap_low, cholesterol,
     return final
 
 
-def show_result(final):
+def show_result(cardio, final):
     if cardio.predict(final) >= 0.5:
         print('Bot: Chances are you have some kind of cardiovascular disease. Better go get a doctor.')
     elif cardio.predict(final) >= 0.3:
