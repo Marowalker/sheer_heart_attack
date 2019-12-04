@@ -17,6 +17,7 @@ def get_training_data(words, classes, documents):
         bag = []
         # list of tokenized words for the pattern
         pattern_words = doc[0]
+        # print(pattern_words)
         # stem each word - create base word, in attempt to represent related words
         pattern_words = [constants.LEMMA.lemmatize(word.lower()) for word in pattern_words]
         # create our bag of words array with 1, if word match found in current pattern

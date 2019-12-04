@@ -27,6 +27,8 @@ data = load_prediction_model(constants.MODEL_PATH + constants.DATA_NAME)
 words = data['words']
 classes = data['classes']
 
+context = {}
+
 intents = json.loads(open(constants.DATA + constants.INTENT_FILE, encoding="utf8").read())
 
 
@@ -50,24 +52,22 @@ def classify_local(sentence, model):
 
 def get_response(message, model, user_id='123', show_details=False):
     # intent = classify_local(message, model)[0]['intent']
-    context = {}
+
     result = classify_local(message, model)
     # print(result)
     intent = result[0]['intent']
+
     for i in intents['intents']:
         if intent == i['tag']:
-            if i['context'] != '':
+            if 'context' in i:
                 if show_details:
                     print('context:', i['context'])
-                context[user_id] = i['context']
+                    if i['context'] != '':
+                        context[user_id] = i['context']
             if not 'link' in i or \
                     (user_id in context and 'link' in i and i['link'] == context[user_id]):
                 if show_details:
                     print('tag:', i['tag'])
-                # a random response from the intent
-                # return print(random.choice(i['responses']))
-                # a random response from the intent
-
                 id = random.randrange(len(i['responses']))
                 response = i['responses'][id]
                 # print(response)
