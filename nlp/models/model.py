@@ -19,9 +19,10 @@ class BotModel:
         self.docs = docs
         self.model = Sequential()
         self.sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
-        self.train_x, self.train_y = train.get_training_data(words, classes, docs)
+        self.train_x, self.train_y = train.tfidf_training(words, classes, docs)
 
     def add_training_ops(self):
+        print(len(self.train_x[0]))
         self.model.add(Dense(128, input_shape=(len(self.train_x[0]),), activation='relu'))
         self.model.add(Dropout(0.5))
         self.model.add(Dense(64, activation='relu'))
@@ -37,8 +38,8 @@ class BotModel:
         pickle.dump(self.model, open(constants.MODEL_PATH + self.model_name, "wb"))
 
         # save all of our data structures
-        pickle.dump({'words': self.words, 'classes': self.classes, 'train_x': self.train_x, 'train_y': self.train_y},
-                    open(constants.MODEL_PATH + constants.DATA_NAME, "wb"))
+        pickle.dump({'words': self.words, 'classes': self.classes, 'documents': self.docs, 'train_x': self.train_x,
+                     'train_y': self.train_y}, open(constants.MODEL_PATH + constants.DATA_NAME, "wb"))
 
 
 class CardioModel:

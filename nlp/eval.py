@@ -1,5 +1,4 @@
 import random
-from _collections import defaultdict
 
 import nlp.constants as constants
 from nlp.utils import load_prediction_model, classify_local, get_response, create_test_case, show_result, input_module
@@ -10,7 +9,6 @@ model = load_prediction_model(constants.MODEL_PATH + constants.BOT_MODEL)
 
 
 def test_dialog():
-    sent = ''
     intent = ''
     while intent != 'goodbye':
         sent = input("You: ")
@@ -26,26 +24,29 @@ def test_dialog():
 
 
 def test_eval():
-    file = open('data/test.txt', 'r')
-    eval_dict = defaultdict()
+    file = open('data/quest.txt', 'r')
+    # eval_dict = defaultdict()
     lines = file.readlines()
     random.shuffle(lines)
+    temp = []
     for line in lines:
         s, i = line.rsplit('|', 1)
         i = i.strip()
-        eval_dict[i] = s
+        temp.append(tuple([s, i]))
+        # eval_dict[i] = s
 
     count = 0
-    for id in eval_dict:
+    for t in temp:
         # print(id)
-        it = classify_local(eval_dict[id], model)[0]['intent']
-        # print(it)
-        if it == id:
+        print(t[1])
+        it = classify_local(t[0], model)[0]['intent']
+        print(it)
+        if it == t[1]:
             count += 1
 
     print(count)
-    print(len(eval_dict))
-    print('model accuracy: ', float(count / len(eval_dict)))
+    print(len(lines))
+    print('model accuracy: ', float(count / len(lines)))
 
 
 # test_dialog()

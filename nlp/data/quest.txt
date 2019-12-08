@@ -1,0 +1,50 @@
+Hello there|greeting
+Talk you later|goodbye
+thanks!|thanks
+ytsdfsrrsavn|noanswer
+tell about this more|more_info
+what to do now?|options
+how i can know if someone has cardiovascular disease?|predict_disease
+what does cardiovascular disease mean?|definition
+how can I detect early cardiovascular disease?|ask_symptoms
+if someone has cardiovascular disease, what can happen to him/her health?|ask_cause
+How do you cure cardiovascular disease|ask_cure
+Are males more common to have cardiovascular disease than females|gender_relation
+Can exercising reduce the risk of suffering from cardiovascular disease?|exercise_relation
+does high cholesterol negatively affect our heart?|cholesterol_relation
+if i smoke frequently, is there any effect?|smoking_relation
+I also sometimes drink alcohol. Does this make my risk of having cardiovascular disease higher?|alcohol_relation
+Does childhood growth relate to risk of having heart disease later?|child_growth_relation
+does my lifestyle such as waking up late make my heart weak?|lifestyle_relation
+What is the relation between inflammation and heart disease?|inflammation_relation
+can we reduce inflammation by using drugs or diet?|inflammation_cure
+May eating fruits and vegetables can reduce heart disease risk?|diet_nutrition_cure
+Can i use some common drugs to prevent cardiovascular disease?|drug_cure
+How long do I need for exercising?|exercise_length_cure
+What exercises can benefit my heart?|exercise_type_cure
+is that true that several alcohol types can make my status better?|alcohol_cure
+What are symptoms of a heart attack?|ask_symptoms
+What is a myocardial infarction?|definition
+What are risk factors for heart disease?|ask_cause
+how's it going|greeting
+bye bye|goodbye
+thanks a lot|thanks
+askfbkas|noanswer
+I need more information|more_info
+What can you provide|options
+I want to know if I have cardiovascular disease|predict_disease
+How do you cure cardiovascular disease|ask_cure
+Are males more common to have cardiovascular disease than females|gender_relation
+Is being fat a risk to having cardiovascular disease|cholesterol_relation
+Do heavy smokers have a higher chance of having cardiovascular disease|smoking_relation
+Does drinking affect the cardiovascular system|alcohol_relation
+Is growth during childhood important in knowing the chances of cardiovascular disease|child_growth_relation
+What is the relation between inflammation and the risk of cardiovascular disease|inflammation_relation
+Can inflammation be reduced by drugs or diet|inflammation_cure
+Do antioxidant nutrients reduce the risk of cardiovascular disease|diet_nutrition_cure
+Will taking drugs reduce the risk of cardiovascular disease|drug_cure
+How much physical activity should I be doing|exercise_length_cure
+What kind of exercise should I take|exercise_type_cure
+Is it true that some type of alcohol is good for the heart|alcohol_cure
+Does exercising reduce the chance of having heart attacks|exercise_relation
+Is a healthy lifestyle responsible for reducing the chances of having cardiovascular disease|lifestyle_relation

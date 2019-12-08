@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from sklearn import preprocessing
 
+import nlp.data.preprocess as preprocess
 from nlp import constants
 
 
@@ -28,6 +29,27 @@ def get_training_data(words, classes, documents):
         output_row = list(output_empty)
         output_row[classes.index(doc[1])] = 1
 
+        training.append([bag, output_row])
+    # shuffle our features and turn into np.array
+    print(len(words))
+    random.shuffle(training)
+    training = np.array(training)
+    # create train and test lists. X - patterns, Y - intents
+    train_x = list(training[:, 0])
+    train_y = list(training[:, 1])
+    return train_x, train_y
+
+
+def tfidf_training(words, classes, documents):
+    training = []
+    # create an empty array for our output
+    output_empty = [0] * len(classes)
+    # training set, bag of words for each sentence
+    for doc in documents:
+        sentence = doc[0]
+        bag = preprocess.tfidf(sentence, words, documents)
+        output_row = list(output_empty)
+        output_row[classes.index(doc[1])] = 1
         training.append([bag, output_row])
     # shuffle our features and turn into np.array
     random.shuffle(training)

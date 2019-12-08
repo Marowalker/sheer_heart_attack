@@ -26,6 +26,7 @@ def load_prediction_model(filename):
 data = load_prediction_model(constants.MODEL_PATH + constants.DATA_NAME)
 words = data['words']
 classes = data['classes']
+docs = data['documents']
 
 context = {}
 
@@ -34,7 +35,8 @@ intents = json.loads(open(constants.DATA + constants.INTENT_FILE, encoding="utf8
 
 def classify_local(sentence, model):
     # generate probabilities from the model
-    input_data = pd.DataFrame([preprocess.bow(sentence, words)], dtype=float, index=['input'])
+    # input_data = pd.DataFrame([preprocess.bow(sentence, words)], dtype=float, index=['input'])
+    input_data = pd.DataFrame([preprocess.tfidf(sentence, words, docs)], dtype=float, index=['input'])
     results = model.predict([input_data])[0]
     # print(results)
     # filter out predictions below a threshold, and provide intent index
