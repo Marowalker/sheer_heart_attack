@@ -1,10 +1,12 @@
 import pickle
 
 import numpy as np
+import pandas as pd
 from keras.constraints import maxnorm
 from keras.layers import Dense, Dropout
 from keras.models import Sequential
 from keras.optimizers import SGD
+from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split
 
 import nlp.data.bot_data as train
@@ -72,4 +74,23 @@ class CardioModel:
         print("\n Training Accuracy:", score[1])
         score = self.model.evaluate(self.test_x, self.test_y)
         print("\n Testing Accuracy:", score[1])
+
+        res = self.model.predict(self.test_x)
+        resdf = pd.DataFrame(res, index=self.test_x.index)
+        resdf.columns = ["Pr"]
+        resdf["ID"] = range(14000)
+        resdf["y"] = np.where(resdf["Pr"] >= 0.5, "1", "0")
+        prediction = resdf.drop(["Pr", "ID"], axis=1)
+        predictionarray = prediction.astype(np.float)
+
+        y_testingdf = pd.DataFrame(self.test_y, index=self.test_y.index)
+        y_testingdf["ID"] = range(14000)
+        y_test = y_testingdf.drop(["ID"], axis=1)
+
+        cm = confusion_matrix(y_test.values, predictionarray)
+
+        Accuracy = cm[0, 0] / (cm[0, 0] + cm[1, 0])
+        print("The accuracy of the model is: " + str(Accuracy * 100) + " %")
+
+
 

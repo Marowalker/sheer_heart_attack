@@ -38,12 +38,14 @@ def classify_local(sentence, model):
     # input_data = pd.DataFrame([preprocess.bow(sentence, words)], dtype=float, index=['input'])
     input_data = pd.DataFrame([preprocess.tfidf(sentence, words, docs)], dtype=float, index=['input'])
     results = model.predict([input_data])[0]
+    # print(model.predict([input_data]))
     # print(results)
     # filter out predictions below a threshold, and provide intent index
     results = [[i, r] for i, r in enumerate(results) if r > constants.ERROR_THRESHOLD]
     # sort by strength of probability
-    results.sort(key=lambda x: x[1], reverse=True)
     # print(results)
+    results.sort(key=lambda x: x[1], reverse=True)
+    print(results)
     return_list = []
     for r in results:
         # print(r)
